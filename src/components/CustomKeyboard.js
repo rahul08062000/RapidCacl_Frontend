@@ -18,6 +18,7 @@ const CustomKeyboard = () => {
     setIsSubmitEnabled,
     handleAutoSubmit, // Use handleAutoSubmit instead of handleSubmitButton
     handleRestart,
+    setShowScoreboard
   } = useContext(AppContext);
 
   const blinkAnim = useRef(new Animated.Value(1)).current;
@@ -93,6 +94,10 @@ const CustomKeyboard = () => {
     { label: '.', color: '#f1f1f0' }
   ];
 
+  const handleViewScoreboard = () => {
+    setShowScoreboard(true);
+  };
+
   return (
     <View style={styles.keyboard}>
       <View style={styles.row}>
@@ -156,12 +161,12 @@ const CustomKeyboard = () => {
         </TouchableOpacity>
 
         {isSubmitted ? (
-          <TouchableOpacity style={styles.restartButton} onPress={handleRestart}>
-            <Animated.Text style={[styles.restartButtonText, { opacity: blinkAnim }]}>
-              Restart
-            </Animated.Text>
-          </TouchableOpacity>
-        ) : (
+              <TouchableOpacity style={styles.viewScoreboardButton} onPress={handleViewScoreboard}>
+                <Animated.Text style={[styles.restartButtonText, { opacity: blinkAnim }]}>
+                  View Scoreboard
+                </Animated.Text>
+              </TouchableOpacity>
+            ): (
           <TouchableOpacity
             style={[
               styles.submitButton,

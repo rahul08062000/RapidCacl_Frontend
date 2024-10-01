@@ -19,7 +19,7 @@ const Form = () => {
   const gridSizeOptions = [6, 7, 8, 9, 10];
   const difficultyOptions = ['Easy', 'Medium', 'Hard'];
   const operatorOptions = ['+', '-', 'X', '/'];
-  const inputModeOptions = ['Guess', 'Custom Keyboard'];
+  const inputModeOptions = ['Guess', 'CustomKeyboard'];
 
   const [currentPicker, setCurrentPicker] = useState(null);
   const animatedHeight = useRef(new Animated.Value(0)).current;
@@ -60,12 +60,13 @@ const Form = () => {
       <ScrollView>
         {options.map((option, index) => {
           const isSelected = selectedValue === option;
+          {{console.log("This is selected value",selectedValue)}}
           return (
             <TouchableOpacity
               key={index}
               onPress={() => {
                 onSelect(option);
-                togglePicker(pickerType); // Close after selection
+                togglePicker(pickerType); 
               }}
               style={[styles.pickerOption, isSelected ? styles.selectedOption : null]}
             >

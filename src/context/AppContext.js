@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect,useRef } from 'react';
 
 export const AppContext = createContext();
 
@@ -23,6 +23,37 @@ export const AppProvider = ({ children }) => {
   const [timerReset, setTimerReset] = useState(false);
 
   const [inputMode, setInputMode] = useState('CustomKeyboard');
+  const [showScoreboard, setShowScoreboard] = useState(false);
+
+  const [time, setTime] = useState(0); // Timer state
+  const timerRef = useRef(null); // Timer interval reference
+
+  useEffect(() => {
+    if (!isFormVisible && !isSubmitted) {
+      startTimer();
+    }
+    return () => stopTimer();
+  }, [isFormVisible, isSubmitted]);
+
+  const startTimer = () => {
+    if (timerRef.current) return;
+    timerRef.current = setInterval(() => {
+      setTime((prevTime) => prevTime + 1);
+    }, 1000);
+  };
+
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const resetTimer = () => {
+    stopTimer();
+    setTime(0);
+    startTimer();
+  };
 
 
   useEffect(() => {
@@ -189,10 +220,12 @@ export const AppProvider = ({ children }) => {
     setIsSubmitEnabled(false);
     setFocusRowIndex(0); 
     setFocusColIndex(0);
-    setTimerReset(true);
+    setShowScoreboard(false);
     // setTimer(0);
     // setIsTimerRunning(true); 
+    setTimerReset(true);
     generateRandomHeaders(); 
+    resetTimer();
   };
 
   return (
@@ -234,6 +267,14 @@ export const AppProvider = ({ children }) => {
         inputMode,
         setInputMode, 
         generateGuessOptions,
+        showScoreboard,
+        setShowScoreboard,
+        setTimerReset,
+        time,
+        setTime,
+        startTimer,
+        stopTimer,
+        resetTimer, 
       }}
     >
       {children}
