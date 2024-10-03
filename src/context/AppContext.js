@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 export const AppContext = createContext();
 
@@ -23,6 +23,10 @@ export const AppProvider = ({ children }) => {
   const [timerReset, setTimerReset] = useState(false);
 
   const [inputMode, setInputMode] = useState('CustomKeyboard');
+  const [showScoreboard, setShowScoreboard] = useState(false);
+
+  //where the timer stop when game is submitted
+  const [finalTime, setFinalTime] = useState(null);
 
 
   useEffect(() => {
@@ -37,59 +41,40 @@ export const AppProvider = ({ children }) => {
     }
   }, [rowHeader, colHeader, selectedOperator]);
 
-  
-
-  // useEffect(() => {
-  //   let interval;
-  //   if (isTimerRunning) {
-  //     interval = setInterval(() => {
-  //       setTimer((prevTime) => prevTime + 1);
-  //     }, 1000);
-  //   } else if (!isTimerRunning && timer !== 0) {
-  //     clearInterval(interval);
-  //   }
-  //   return () => clearInterval(interval); // Clean up timer on unmount
-  // }, [isTimerRunning, timer]);
-
-   // Function to generate six options, one of which is the correct answer
-   const generateGuessOptions = (expectedValue) => {
-    let options = [expectedValue]; // Include the correct answer
+  const generateGuessOptions = useCallback((expectedValue) => {
+    let options = [expectedValue];
     while (options.length < 6) {
-      const randomOption = Math.floor(Math.random() * 100); // Generate random numbers as options
+      const randomOption = Math.floor(Math.random() * 100);
       if (!options.includes(randomOption)) {
         options.push(randomOption);
       }
     }
-    return options.sort(() => Math.random() - 0.5); // Shuffle the options
-  };
-  
+    return options.sort(() => Math.random() - 0.5);
+  }, []);
 
-  const handleInputChange = (rowIndex, colIndex, value) => {
+  const handleInputChange = useCallback((rowIndex, colIndex, value) => {
     const key = `${rowIndex},${colIndex}`;
     setInputValues((prevValues) => {
       const newValues = { ...prevValues, [key]: value };
-      setVisitedCells((prev) => new Set(prev).add(key)); // Add cell to visited set
+      setVisitedCells((prev) => new Set(prev).add(key));
       checkAllCellsFilled(newValues);
       return newValues;
     });
-  };
+  }, [inputValues]);
 
-  // Check if all cells are filled and enable submit button
-  const checkAllCellsFilled = (newInputValues) => {
+  const checkAllCellsFilled = useCallback((newInputValues) => {
     const totalCells = rowHeader.length * colHeader.length;
     if (Object.keys(newInputValues).length === totalCells) {
-      setIsSubmitEnabled(true); // Enable submit button
-      // setIsTimerRunning(false); 
+      setIsSubmitEnabled(true);
     }
-  };
+  }, [rowHeader, colHeader]);
 
-  // Auto-submit the grid and validate cells
-  const handleAutoSubmit = () => {
+  const handleAutoSubmit = useCallback(() => {
     let newCorrectCells = new Set();
     let newIncorrectCells = new Set();
 
     Object.keys(expectedValues).forEach((key) => {
-      if (parseFloat(inputValues[key]) === parseFloat(expectedValues[key])) { // Use parseFloat for decimal comparison
+      if (parseFloat(inputValues[key]) === parseFloat(expectedValues[key])) {
         newCorrectCells.add(key);
       } else {
         newIncorrectCells.add(key);
@@ -98,14 +83,11 @@ export const AppProvider = ({ children }) => {
 
     setCorrectCells(newCorrectCells);
     setIncorrectCells(newIncorrectCells);
-    setIsSubmitted(true); // Mark as submitted
-    //setIsTimerRunning(false);
-  };
+    setIsSubmitted(true);
+  }, [expectedValues, inputValues]);
 
-  // Generate random row and column headers based on difficulty
-  const generateRandomHeaders = () => {
+  const generateRandomHeaders = useCallback(() => {
     const size = gridSize;
-
     let randomRowHeader = [];
     let randomColHeader = [];
 
@@ -127,10 +109,9 @@ export const AppProvider = ({ children }) => {
 
     setRowHeader(randomRowHeader);
     setColHeader(randomColHeader);
-  };
+  }, [difficulty, gridSize]);
 
-  // Calculate expected values based on the selected operator
-  const calculateExpectedValues = () => {
+  const calculateExpectedValues = useCallback(() => {
     let calculatedValues = {};
     for (let row = 0; row < rowHeader.length; row++) {
       for (let col = 0; col < colHeader.length; col++) {
@@ -156,44 +137,66 @@ export const AppProvider = ({ children }) => {
       }
     }
     setExpectedValues(calculatedValues);
-  };
+  }, [rowHeader, colHeader, selectedOperator]);
 
-  const switchToRandomUnvisitedCell = () => {
+  const switchToRandomUnvisitedCell = useCallback(() => {
     const totalCells = rowHeader.length * colHeader.length;
-    const visitedCellsArray = Array.from(visitedCells);
-
-    if (visitedCellsArray.length === totalCells) {
+  
+    // If all cells are visited, enable submit and stop
+    if (visitedCells.size === totalCells) {
       setIsSubmitEnabled(true);
       setFocusRowIndex(null);
       setFocusColIndex(null);
       return;
     }
+  
+    let randomIndex = Math.floor(Math.random() * totalCells); // Start at a random index
+    let cellFound = false;
+  
+    // Iterate over the grid in a single loop
+    for (let i = 0; i < totalCells; i++) {
+      // Calculate the row and col index using the current index
+      const currentIndex = (randomIndex + i) % totalCells; // Modulo to wrap around the grid
+      const rowIndex = Math.floor(currentIndex / colHeader.length);
+      const colIndex = currentIndex % colHeader.length;
+      const key = `${rowIndex},${colIndex}`;
+  
+      if (!visitedCells.has(key)) {
+        setFocusRowIndex(rowIndex);
+        setFocusColIndex(colIndex);
+        cellFound = true;
+        break;
+      }
+    }
+  
+    // Fallback in case no unvisited cell is found (shouldn't happen in a properly working game)
+    if (!cellFound) {
+      setFocusRowIndex(null);
+      setFocusColIndex(null);
+      setIsSubmitEnabled(true);
+    }
+  }, [visitedCells, rowHeader, colHeader]);
+  
 
-    let randomRow, randomCol, randomKey;
-    do {
-      randomRow = Math.floor(Math.random() * rowHeader.length);
-      randomCol = Math.floor(Math.random() * colHeader.length);
-      randomKey = `${randomRow},${randomCol}`;
-    } while (visitedCells.has(randomKey));
-
-    setFocusRowIndex(randomRow);
-    setFocusColIndex(randomCol);
-  };
-
-  const handleRestart = () => {
+  const handleRestart = useCallback(() => {
+    const currentGridSize = gridSize;
+    const currentDifficulty = difficulty;
+    const currentSelectedOperator = selectedOperator;
     setInputValues({});
     setVisitedCells(new Set());
     setCorrectCells(new Set());
     setIncorrectCells(new Set());
     setIsSubmitted(false);
     setIsSubmitEnabled(false);
-    setFocusRowIndex(0); 
+    setFocusRowIndex(0);
     setFocusColIndex(0);
+    setShowScoreboard(false);
     setTimerReset(true);
-    // setTimer(0);
-    // setIsTimerRunning(true); 
-    generateRandomHeaders(); 
-  };
+    setGridSize(currentGridSize); 
+    setDifficulty(currentDifficulty); 
+    setSelectedOperator(currentSelectedOperator);
+    generateRandomHeaders();
+  }, []);
 
   return (
     <AppContext.Provider
@@ -234,6 +237,10 @@ export const AppProvider = ({ children }) => {
         inputMode,
         setInputMode, 
         generateGuessOptions,
+        showScoreboard,
+        setShowScoreboard,
+        finalTime,
+        setFinalTime
       }}
     >
       {children}

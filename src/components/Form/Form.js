@@ -120,7 +120,7 @@ const Form = () => {
         )}
               {/* Input Mode Picker (Guess / Custom Keyboard) */}
 
-        <TouchableOpacity onPress={() => togglePicker('inputMode')} style={styles.picker}>
+        {/* <TouchableOpacity onPress={() => togglePicker('inputMode')} style={styles.picker}>
         <Text style={styles.pickerText}>Input Mode: {inputMode}</Text>
       </TouchableOpacity>
       {currentPicker === 'inputMode' &&
@@ -129,7 +129,7 @@ const Form = () => {
           inputMode,
           setInputMode,
           'inputMode'
-        )}
+        )} */}
 
       {/* Submit Button */}
       <TouchableOpacity style={globalStyles.submitButton} onPress={handleFormSubmit}>

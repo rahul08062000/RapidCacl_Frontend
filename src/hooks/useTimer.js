@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, useRef } from 'react';
 import { AppContext } from '../context/AppContext';
 
 const useTimer = () => {
-  const { isSubmitted, isFormVisible, timerReset } = useContext(AppContext);
+  const { isSubmitted, isFormVisible, timerReset, showScoreboard, finalTime, setFinalTime } = useContext(AppContext);
   const [time, setTime] = useState(0);
   const timerRef = useRef(null);
 
@@ -16,25 +16,25 @@ const useTimer = () => {
 
   // Start the timer when the grid becomes visible
   useEffect(() => {
-    if (!isFormVisible && !isSubmitted) {
+    if (!isFormVisible && !isSubmitted && !showScoreboard) {
       startTimer();
     }
-    return () => stopTimer(); // Cleanup timer on unmount
   }, [isFormVisible, isSubmitted]);
 
-  // Stop the timer when the game is submitted
+  // Stop the timer and store formatted final time when the game is submitted
   useEffect(() => {
-    if (isSubmitted) {
+    if (isSubmitted && !showScoreboard) {
       stopTimer();
+      setFinalTime(formatTime(time)); // Capture the formatted time when submitted
     }
-  }, [isSubmitted]);
+  }, [isSubmitted, time]);
 
-  // Reset the timer when the game is restarted
-  useEffect(() => {
-    if (timerReset) {
-      resetTimer();
-    }
-  }, [timerReset]);
+  // Log finalTime on change
+  // useEffect(() => {
+  //   if (finalTime) {
+  //     console.log("This is the final time", finalTime); // Log after finalTime is updated
+  //   }
+  // }, [finalTime]);
 
   const startTimer = () => {
     if (timerRef.current) return; // Prevent multiple intervals from running
@@ -52,11 +52,18 @@ const useTimer = () => {
 
   const resetTimer = () => {
     stopTimer(); // Ensure the timer is stopped before resetting
-    setTime(0);  // Reset time to zero
+    setTime(0);  // Reset time to zero for the new game
+    // DO NOT reset finalTime here, so that it's preserved for the scoreboard
     startTimer(); // Start the timer again after reset
   };
 
-  return { time: formatTime(time), startTimer, stopTimer, resetTimer };
+  return {
+    time: formatTime(time), // Current running time (formatted)
+    finalTime, // Final time when submitted (formatted)
+    startTimer,
+    stopTimer,
+    resetTimer,
+  };
 };
 
 export default useTimer;

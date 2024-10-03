@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, Animated } from 'react-native';
 
 const Cell = ({
@@ -12,14 +12,25 @@ const Cell = ({
   setFocusRowIndex,
   setFocusColIndex,
   handleInputChange, // Accept handleInputChange as a prop
+  isLastColumn
 }) => {
   const fontSize = cellSize * 0.4; // Dynamic font size based on cell size
   const [cellValue, setCellValue] = useState(value);
   const zIndexValue = isFocused ? 3 : 0;
 
+  const overlayLeftPosition = useRef(new Animated.Value(6)).current;
+
   useEffect(() => {
     setCellValue(value); // Update cell value if prop changes
   }, [value]);
+
+  useEffect(() => {
+    Animated.timing(overlayLeftPosition, {
+      toValue: isLastColumn ? -18 : 6,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [isLastColumn]);
 
   // const handlePress = () => {
   //   setFocusRowIndex(rowIndex);
@@ -45,9 +56,11 @@ const Cell = ({
       </TouchableOpacity>
 
       {isFocused && (
-        <Animated.View style={[styles.overlay, { width: cellSize * 1.2, height: cellSize * 1.2 }]}>
-          <Text style={[styles.overlayText, { fontSize: fontSize * 1.4 }]}>{cellValue}</Text>
-        </Animated.View>
+        <Animated.View
+        style={[styles.overlay, { width: cellSize * 1.2, height: cellSize * 1.2, left: overlayLeftPosition }]}
+      >
+        <Text style={[styles.overlayText, { fontSize: fontSize * 1.4 }]}>{cellValue}</Text>
+      </Animated.View>
       )}
     </View>
   );
@@ -90,7 +103,7 @@ const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
     top: 6,  
-    left: 6,  
+    // left: 6,  
     height: '140%',  
     width: '140%',   
     backgroundColor: '#00246B',  

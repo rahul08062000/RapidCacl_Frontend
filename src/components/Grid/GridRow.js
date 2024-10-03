@@ -20,7 +20,7 @@ const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
       style={[
         styles.row,
         {
-          transform: [{ translateX: shiftAnimation }], // Apply shift animation to each row
+          // transform: [{ translateX: shiftAnimation }], // Apply shift animation to each row
         },
       ]}
     >
@@ -30,6 +30,7 @@ const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
         const isCorrect = correctCells.has(cellKey);
         const isIncorrect = incorrectCells.has(cellKey);
         const zIndexValue = isFocused ? 3 : 0;
+        const isLastColumn = colIndex === colHeader.length - 1;
 
 
         return (
@@ -45,6 +46,7 @@ const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
             cellSize={cellSize}
             setFocusRowIndex={setFocusRowIndex}
             setFocusColIndex={setFocusColIndex}
+            isLastColumn={isLastColumn}
           />
           </View>
         );

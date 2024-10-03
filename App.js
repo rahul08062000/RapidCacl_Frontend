@@ -6,10 +6,15 @@ import Form from './src/components/Form/Form';
 import Grid from './src/components/Grid/Grid';
 import CustomKeyboard from './src/components/CustomKeyboard';
 import GuessModeKeyboard from './src/components/GuessModeKeyboard';
-
+import Scoreboard from './src/components/Scoreboard'; // Import your Scoreboard component
 
 const MainContent = () => {
-  const { isFormVisible, inputMode  } = useContext(AppContext);
+  const { isFormVisible, inputMode, showScoreboard } = useContext(AppContext);
+
+  // Show the Scoreboard if showScoreboard is true
+  if (showScoreboard) {
+    return <Scoreboard />;
+  }
 
   return (
     <View style={styles.container}>
@@ -19,7 +24,7 @@ const MainContent = () => {
         <>
           <Grid />
           <View style={styles.keyboardContainer}>
-          {inputMode === 'CustomKeyboard' ? (
+            {inputMode === 'CustomKeyboard' ? (
               <CustomKeyboard />
             ) : (
               <GuessModeKeyboard />
@@ -32,20 +37,21 @@ const MainContent = () => {
 };
 
 const AppContent = () => {
-  const { isFormVisible } = useContext(AppContext);
+  const { isFormVisible, showScoreboard } = useContext(AppContext);
 
   return (
-    <>
+    <SafeAreaView style={styles.safeAreaContainer}>
       {/* Render Header only when the form is not visible */}
-      {!isFormVisible && <Header />}
+      {!isFormVisible && !showScoreboard && <Header />}
       <MainContent />
-    </>
+    </SafeAreaView>
   );
 };
 
 const App = () => {
   return (
     <AppProvider>
+      {/* SafeAreaView ensures safe display across devices */}
       <SafeAreaView style={styles.safeAreaContainer}>
         <AppContent />
       </SafeAreaView>
