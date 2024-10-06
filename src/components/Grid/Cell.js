@@ -18,6 +18,9 @@ const Cell = ({
   const [cellValue, setCellValue] = useState(value);
   const zIndexValue = isFocused ? 3 : 0;
 
+  const animatedSize = useRef(new Animated.Value(cellSize)).current;
+
+
   const overlayLeftPosition = useRef(new Animated.Value(6)).current;
 
   useEffect(() => {
@@ -31,6 +34,9 @@ const Cell = ({
       useNativeDriver: false,
     }).start();
   }, [isLastColumn]);
+
+  //cell size increase Animation 
+  
 
   // const handlePress = () => {
   //   setFocusRowIndex(rowIndex);

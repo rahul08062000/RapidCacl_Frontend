@@ -25,7 +25,7 @@ export const AppProvider = ({ children }) => {
   const [inputMode, setInputMode] = useState('CustomKeyboard');
   const [showScoreboard, setShowScoreboard] = useState(false);
 
-  //where the timer stop when game is submitted
+ 
   const [finalTime, setFinalTime] = useState(null);
 
 
@@ -150,13 +150,13 @@ export const AppProvider = ({ children }) => {
       return;
     }
   
-    let randomIndex = Math.floor(Math.random() * totalCells); // Start at a random index
+    let randomIndex = Math.floor(Math.random() * totalCells); 
     let cellFound = false;
   
     // Iterate over the grid in a single loop
     for (let i = 0; i < totalCells; i++) {
       // Calculate the row and col index using the current index
-      const currentIndex = (randomIndex + i) % totalCells; // Modulo to wrap around the grid
+      const currentIndex = (randomIndex + i) % totalCells; 
       const rowIndex = Math.floor(currentIndex / colHeader.length);
       const colIndex = currentIndex % colHeader.length;
       const key = `${rowIndex},${colIndex}`;
@@ -168,8 +168,6 @@ export const AppProvider = ({ children }) => {
         break;
       }
     }
-  
-    // Fallback in case no unvisited cell is found (shouldn't happen in a properly working game)
     if (!cellFound) {
       setFocusRowIndex(null);
       setFocusColIndex(null);
@@ -178,10 +176,7 @@ export const AppProvider = ({ children }) => {
   }, [visitedCells, rowHeader, colHeader]);
   
 
-  const handleRestart = useCallback(() => {
-    const currentGridSize = gridSize;
-    const currentDifficulty = difficulty;
-    const currentSelectedOperator = selectedOperator;
+  const handleRestart =() => {
     setInputValues({});
     setVisitedCells(new Set());
     setCorrectCells(new Set());
@@ -192,11 +187,8 @@ export const AppProvider = ({ children }) => {
     setFocusColIndex(0);
     setShowScoreboard(false);
     setTimerReset(true);
-    setGridSize(currentGridSize); 
-    setDifficulty(currentDifficulty); 
-    setSelectedOperator(currentSelectedOperator);
     generateRandomHeaders();
-  }, []);
+  }
 
   return (
     <AppContext.Provider
@@ -231,7 +223,7 @@ export const AppProvider = ({ children }) => {
         colHeader,
         switchToRandomUnvisitedCell,
         handleInputChange,
-        handleAutoSubmit, // Pass the handleAutoSubmit function here
+        handleAutoSubmit, 
         handleRestart,
         timerReset,
         inputMode,

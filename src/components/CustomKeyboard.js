@@ -574,7 +574,7 @@ const CustomKeyboard = () => {
     if (currentCellValue.length === expectedValueLength) {
       setTimeout(() => {
         switchToRandomUnvisitedCell();
-      }, 200); // Delay of 200ms before switching to next cell
+      }, 20); // Delay of 200ms before switching to next cell
     }
   }, [focusRowIndex, focusColIndex, inputValues, setVisitedCells, switchToRandomUnvisitedCell, expectedValues]);
   

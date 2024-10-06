@@ -26,7 +26,7 @@ const Grid = () => {
         }),
       ])
     ).start();
-  }, [focusRowIndex, focusColIndex]); // Dependency on focusRowIndex and focusColIndex
+  }, [focusRowIndex, focusColIndex]); 
 
   // Animate both headers and rows to shift when focus is on the last column
   useEffect(() => {
@@ -52,12 +52,13 @@ const Grid = () => {
   const availableHeight = screenHeight - 200;
   
   // Adjust the cell size by reducing the divisor for a larger grid size
-  const scalingFactor = 0.97;  // Scale the size of each cell (Increase for larger width)
+  const scalingFactor = 0.97;  
   const cellSize = Math.min((screenWidth / (totalGridSize + 1)) * scalingFactor, availableHeight / (totalGridSize + 1));
 
   const renderOperator = () => (
     <View style={[styles.operatorCell, { width: cellSize, height: cellSize }]}>
       <Text style={styles.operatorText}>{selectedOperator || 'X'}</Text>
+      {console.log("operator render:",selectedOperator)}
     </View>
   );
 
@@ -104,7 +105,7 @@ const Grid = () => {
               {row}
             </Animated.Text>
           </View>
-  
+          {console.log("for rowIndex:",rowIndex)}
           <GridRow
             rowIndex={rowIndex}
             cellSize={cellSize}

@@ -90,8 +90,9 @@ const Scoreboard = () => {
                 <View style={styles.separatorLine} />
                 <View style={styles.statItem}>
                     <Ionicons name="speedometer" size={20} color="#007BFF" />
-                    <Text style={styles.statLabel}>Velocity</Text>
-                    <Text style={styles.statValue}>{(totalCells / timeInMinutes).toFixed(2)} Task/min</Text>
+                    <Text style={styles.statLabel}>Accuracy</Text>
+                    {/* <Text style={styles.statValue}>{(totalCells / timeInMinutes).toFixed(2)} Task/min</Text> */}
+                    <Text style={styles.statValue}>{accuracy}</Text>
                 </View>
             </View>
 

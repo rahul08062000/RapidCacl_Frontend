@@ -24,13 +24,16 @@ const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
         },
       ]}
     >
+      {console.log("outSide map")}
       {colHeader.map((_, colIndex) => {
+        console.log("this is cell number:",`${rowIndex},${colIndex}`)
         const cellKey = `${rowIndex},${colIndex}`;
         const isFocused = focusRowIndex === rowIndex && focusColIndex === colIndex;
         const isCorrect = correctCells.has(cellKey);
         const isIncorrect = incorrectCells.has(cellKey);
         const zIndexValue = isFocused ? 3 : 0;
         const isLastColumn = colIndex === colHeader.length - 1;
+        const totalCells = colHeader.length * rowIndex; 
 
 
         return (
@@ -47,6 +50,7 @@ const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
             setFocusRowIndex={setFocusRowIndex}
             setFocusColIndex={setFocusColIndex}
             isLastColumn={isLastColumn}
+            totalCells={totalCells}
           />
           </View>
         );
