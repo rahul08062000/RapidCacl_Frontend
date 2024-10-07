@@ -13,7 +13,7 @@ export const AppProvider = ({ children }) => {
   const [visitedCells, setVisitedCells] = useState(new Set());
   const [correctCells, setCorrectCells] = useState(new Set());
   const [incorrectCells, setIncorrectCells] = useState(new Set());
-  const [isFormVisible, setIsFormVisible] = useState(true);
+  const [isFormVisible, setIsFormVisible] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitEnabled, setIsSubmitEnabled] = useState(false);
 
@@ -27,6 +27,10 @@ export const AppProvider = ({ children }) => {
 
  
   const [finalTime, setFinalTime] = useState(null);
+
+  const [isKeyboardVisible,setIsKeyboardVisible] = useState(true);
+  const [keyboardReplacementContent, setKeyboardReplacementContent] = useState(null);
+
 
 
   useEffect(() => {
@@ -232,7 +236,11 @@ export const AppProvider = ({ children }) => {
         showScoreboard,
         setShowScoreboard,
         finalTime,
-        setFinalTime
+        setFinalTime,
+        isKeyboardVisible,
+        setIsKeyboardVisible,
+        keyboardReplacementContent, 
+        setKeyboardReplacementContent
       }}
     >
       {children}

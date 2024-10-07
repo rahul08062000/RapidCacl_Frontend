@@ -9,7 +9,7 @@ import GuessModeKeyboard from './src/components/GuessModeKeyboard';
 import Scoreboard from './src/components/Scoreboard'; // Import your Scoreboard component
 
 const MainContent = () => {
-  const { isFormVisible, inputMode, showScoreboard } = useContext(AppContext);
+  const { inputMode, showScoreboard } = useContext(AppContext);
 
   // Show the Scoreboard if showScoreboard is true
   if (showScoreboard) {
@@ -17,21 +17,25 @@ const MainContent = () => {
   }
 
   return (
-    <View style={styles.container}>
-      {isFormVisible ? (
+    <View style={styles.mainContentContainer}>
+      {/* Grid at the top */}
+      <View style={styles.gridContainer}>
+        <Grid />
+      </View>
+
+      {/* Form right below the grid */}
+      <View style={styles.formContainer}>
         <Form />
-      ) : (
-        <>
-          <Grid />
-          <View style={styles.keyboardContainer}>
-            {inputMode === 'CustomKeyboard' ? (
-              <CustomKeyboard />
-            ) : (
-              <GuessModeKeyboard />
-            )}
-          </View>
-        </>
-      )}
+      </View>
+
+      {/* Keyboard section at the bottom */}
+      <View style={styles.keyboardContainer}>
+        {inputMode === 'CustomKeyboard' ? (
+          <CustomKeyboard />
+        ) : (
+          <GuessModeKeyboard />
+        )}
+      </View>
     </View>
   );
 };
@@ -41,7 +45,7 @@ const AppContent = () => {
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
-      {/* Render Header only when the form is not visible */}
+      {/* Render Header only when the form is not visible and scoreboard is not shown */}
       {!isFormVisible && !showScoreboard && <Header />}
       <MainContent />
     </SafeAreaView>
@@ -51,7 +55,6 @@ const AppContent = () => {
 const App = () => {
   return (
     <AppProvider>
-      {/* SafeAreaView ensures safe display across devices */}
       <SafeAreaView style={styles.safeAreaContainer}>
         <AppContent />
       </SafeAreaView>
@@ -64,13 +67,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f0f0f0',
   },
-  container: {
+  mainContentContainer: {
     flex: 1,
+    justifyContent: 'space-between',
     backgroundColor: '#f0f0f0',
   },
+  gridContainer: {
+    flex: 3, // Take 3/6 of the available space
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  formContainer: {
+    flex: 0.8, // Increase the height of the form to make it more prominent
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f7f7f7',
+    paddingVertical: 10, // Reduce any unnecessary margin or padding
+    marginVertical:10,
+    zIndex:0
+  },
   keyboardContainer: {
-    height: 200,
-    justifyContent: 'flex-end',
+    height: 200, // Fixed height for the keyboard container
+    justifyContent: 'center',
+    marginVertical:25
   },
 });
 

@@ -7,17 +7,18 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/1MATHTRIX.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff",
       "jsEngine": "hermes"
     },
     "ios": {
+      "icon": "./assets/1MATHTRIX.png",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/1MATHTRIX.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.rahulSaini.RapidCacl"

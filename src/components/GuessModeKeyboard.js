@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { AppContext } from '../context/AppContext';
 
 const GuessModeKeyboard = () => {
-  const { generateGuessOptions, inputValues, expectedValues, focusRowIndex, focusColIndex, handleInputChange, switchToRandomUnvisitedCell,rowHeader,colHeader, visitedCells, handleAutoSubmit } = useContext(AppContext);
+  const { generateGuessOptions, inputValues, expectedValues, focusRowIndex, focusColIndex, handleInputChange, switchToRandomUnvisitedCell,rowHeader,colHeader, visitedCells, handleAutoSubmit,isKeyboardVisible,
+    keyboardReplacementContent } = useContext(AppContext);
   const [guessOptions, setGuessOptions] = useState([]);
 
   useEffect(() => {
@@ -30,6 +31,14 @@ const GuessModeKeyboard = () => {
       }
     }
   };
+
+  if (!isKeyboardVisible) {
+    return (
+      <View style={styles.keyboardReplacement}>
+        {keyboardReplacementContent}
+      </View>
+    );
+  }
   
 
   return (

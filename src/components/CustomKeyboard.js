@@ -508,7 +508,9 @@ const CustomKeyboard = () => {
     setIsSubmitEnabled,
     handleAutoSubmit, 
     handleRestart,
-    setShowScoreboard
+    setShowScoreboard,
+    isKeyboardVisible,
+    keyboardReplacementContent
   } = useContext(AppContext);
 
   const blinkAnim = useRef(new Animated.Value(1)).current;
@@ -596,6 +598,14 @@ const CustomKeyboard = () => {
   const handleViewScoreboard = () => {
     setShowScoreboard(true);
   };
+
+  if (!isKeyboardVisible) {
+    return (
+      <View style={styles.keyboardReplacement}>
+        {keyboardReplacementContent}
+      </View>
+    );
+  }
 
   return (
     <View style={[
