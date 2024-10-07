@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from 'react';
-import { View, TouchableOpacity, Text, ScrollView, StyleSheet, Animated, Easing } from 'react-native';
+import { View, TouchableOpacity, Text, ScrollView, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
 import { AppContext } from '../../context/AppContext';
 import globalStyles from '../../styles/globalStyles';
 
@@ -11,23 +11,27 @@ const Form = () => {
     setDifficulty,
     selectedOperator,
     setSelectedOperator,
-    setIsFormVisible,
-    inputMode, 
+    inputMode,
     setInputMode,
+    setIsKeyboardVisible,
+    setKeyboardReplacementContent,
   } = useContext(AppContext);
 
   const gridSizeOptions = [6, 7, 8, 9, 10];
   const difficultyOptions = ['Easy', 'Medium', 'Hard'];
   const operatorOptions = ['+', '-', 'X', '/'];
-  const inputModeOptions = ['Guess', 'Custom Keyboard'];
+  const inputModeOptions = ['Guess', 'CustomKeyboard'];
+  const settingsOptions = ['Linear', 'Random', 'Sequential', 'Manually Sequential'];
 
   const [currentPicker, setCurrentPicker] = useState(null);
   const animatedHeight = useRef(new Animated.Value(0)).current;
   const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const windowWidth = Dimensions.get('window').width; // Get screen width
 
   const animateDropdown = (pickerType, shouldOpen) => {
     setIsAnimating(true);
-
     Animated.timing(animatedHeight, {
       toValue: shouldOpen ? 150 : 0,
       duration: 300,
@@ -36,159 +40,149 @@ const Form = () => {
     }).start(() => setIsAnimating(false));
   };
 
-  const togglePicker = (pickerType) => {
-    if (isAnimating) return;
+  const handleSelection = (pickerType, option) => {
+    setSelectedOption(option);
 
+    // Update the correct state based on pickerType
+    switch (pickerType) {
+      case 'grid':
+        setGridSize(option);
+        break;
+      case 'difficulty':
+        setDifficulty(option);
+        break;
+      case 'operator':
+        setSelectedOperator(option);
+        break;
+      case 'inputMode':
+        setInputMode(option);
+        break;
+      case 'settings':
+        // Handle settings selection here if you need to store it in context
+        break;
+      default:
+        break;
+    }
+
+    // Close the picker after selection and show keyboard
+    setIsKeyboardVisible(true);
+    setCurrentPicker(null);
+    setKeyboardReplacementContent(null);
+  };
+
+  const togglePicker = (pickerType, options) => {
+    if (isAnimating) return;
     if (currentPicker === pickerType) {
+      // Close dropdown and show the keyboard
       animateDropdown(pickerType, false);
       setCurrentPicker(null);
+      setIsKeyboardVisible(true);
+      setKeyboardReplacementContent(null);
     } else {
+      // Open dropdown and hide the keyboard
       animateDropdown(currentPicker, false);
       setTimeout(() => {
         setCurrentPicker(pickerType);
         animateDropdown(pickerType, true);
+        setIsKeyboardVisible(false);
+        setKeyboardReplacementContent(renderPickerOptions(options, pickerType));
       }, 300);
     }
   };
 
-  const handleFormSubmit = () => {
-    setIsFormVisible(false);
-  };
-
-  const renderPickerOptions = (options, selectedValue, onSelect, pickerType) => (
-    <Animated.View style={[styles.pickerOptionsContainer, { height: animatedHeight }]}>
+  const renderPickerOptions = (options, pickerType) => (
+    <View style={[styles.keyboardReplacementContainer, { width: windowWidth }]}>
       <ScrollView>
         {options.map((option, index) => {
-          const isSelected = selectedValue === option;
+          const isSelected = selectedOption === option;
           return (
             <TouchableOpacity
               key={index}
-              onPress={() => {
-                onSelect(option);
-                togglePicker(pickerType); // Close after selection
-              }}
-              style={[styles.pickerOption, isSelected ? styles.selectedOption : null]}
+              onPress={() => handleSelection(pickerType, option)} // Call handleSelection
+              style={[
+                styles.keyContainer,
+                { backgroundColor: isSelected ? '#eceefe' : '#ffffff' },
+              ]}
             >
-              <Text style={[styles.pickerOptionText, isSelected ? styles.selectedOptionText : null]}>
-                {pickerType === 'grid' ? `${option} x ${option}` : option}
-              </Text>
+              <Text style={styles.keyText}>{option}</Text>
             </TouchableOpacity>
           );
         })}
       </ScrollView>
-    </Animated.View>
+    </View>
   );
 
   return (
     <View style={globalStyles.formContainer}>
-      <Text style={styles.formTitle}>Select Your Choice</Text>
-
-      {/* Grid Size Picker */}
-      <TouchableOpacity onPress={() => togglePicker('grid')} style={styles.picker}>
-        <Text style={styles.pickerText}>Grid Size: {gridSize} x {gridSize}</Text>
-      </TouchableOpacity>
-      {currentPicker === 'grid' &&
-        renderPickerOptions(
-          gridSizeOptions,
-          gridSize,
-          setGridSize,
-          'grid'
-        )}
-
-      {/* Difficulty Picker */}
-      <TouchableOpacity onPress={() => togglePicker('difficulty')} style={styles.picker}>
-        <Text style={styles.pickerText}>Difficulty: {difficulty}</Text>
-      </TouchableOpacity>
-      {currentPicker === 'difficulty' &&
-        renderPickerOptions(
-          difficultyOptions,
-          difficulty,
-          setDifficulty,
-          'difficulty'
-        )}
-
-      {/* Operator Picker */}
-      <TouchableOpacity onPress={() => togglePicker('operator')} style={styles.picker}>
-        <Text style={styles.pickerText}>Operator: {selectedOperator}</Text>
-      </TouchableOpacity>
-      {currentPicker === 'operator' &&
-        renderPickerOptions(
-          operatorOptions,
-          selectedOperator,
-          setSelectedOperator,
-          'operator'
-        )}
-              {/* Input Mode Picker (Guess / Custom Keyboard) */}
-
-        {/* <TouchableOpacity onPress={() => togglePicker('inputMode')} style={styles.picker}>
-        <Text style={styles.pickerText}>Input Mode: {inputMode}</Text>
-      </TouchableOpacity>
-      {currentPicker === 'inputMode' &&
-        renderPickerOptions(
-          inputModeOptions,
-          inputMode,
-          setInputMode,
-          'inputMode'
-        )} */}
-
-      {/* Submit Button */}
-      <TouchableOpacity style={globalStyles.submitButton} onPress={handleFormSubmit}>
-        <Text style={globalStyles.submitButtonText}>Submit</Text>
-      </TouchableOpacity>
+      <View style={styles.inputContainer}>
+        <TouchableOpacity onPress={() => togglePicker('grid', gridSizeOptions)} style={styles.circleButton}>
+          <Text style={styles.circleButtonText}>{gridSize}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => togglePicker('difficulty', difficultyOptions)} style={styles.circleButton}>
+          <Text style={styles.circleButtonText}>{difficulty}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => togglePicker('operator', operatorOptions)} style={styles.circleButton}>
+          <Text style={styles.circleButtonText}>{selectedOperator}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => togglePicker('inputMode', inputModeOptions)} style={styles.circleButton}>
+          <Text style={styles.circleButtonText}>{inputMode}</Text>
+        </TouchableOpacity>
+        {/* Settings button added to the same row */}
+        <TouchableOpacity onPress={() => togglePicker('settings', settingsOptions)} style={styles.circleButton}>
+          <Text style={styles.circleButtonText}>Settings</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  formTitle: {
-    fontSize: 26,
-    fontWeight: '700',
-    marginBottom: 40,
-    color: '#2a2a2a',
-  },
-  picker: {
-    borderWidth: 2,
-    borderColor: '#007BFF',
-    borderRadius: 10,
-    marginBottom: 20,
-    width: '90%',
-    padding: 15,
-    backgroundColor: '#fff',
-    elevation: 2,
+  inputContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    flexWrap: 'wrap', // Added wrap in case buttons exceed width
+  },
+  circleButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#007BFF',
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    marginHorizontal: 5,
   },
-  pickerText: {
+  circleButtonText: {
     fontSize: 18,
-    fontWeight: '500',
-    color: '#333',
+    color: '#fff',
+    fontWeight: 'bold',
   },
-  pickerOptionsContainer: {
-    borderWidth: 1,
+  // Keyboard replacement dropdown container
+  keyboardReplacementContainer: {
+    height: 200, // Match CustomKeyboard height
+    justifyContent: 'center',
+    backgroundColor: '#f0f0f0', // Match CustomKeyboard background
+    paddingVertical: 10,
+    borderTopWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 10,
-    width: '90%',
-    maxHeight: 150,
-    marginBottom: 20,
-    backgroundColor: '#fff',
-    // overflow: 'hidden',
   },
-  pickerOption: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+  // Full-width key container inside dropdown
+  keyContainer: {
+    width: '100%', // Take full width
+    height: 50, // Match CustomKeyboard key height
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff', // Initial background color
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
-  selectedOption: {
-    backgroundColor: '#007BFF',
-  },
-  pickerOptionText: {
-    fontSize: 16,
-    color: '#007BFF',
-  },
-  selectedOptionText: {
-    color: '#fff',
+  keyText: {
+    fontSize: 20,
+    color: '#003366',
+    fontWeight: '500',
+    shadowColor: 'black',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 1,
   },
 });
 

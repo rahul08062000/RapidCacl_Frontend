@@ -58,7 +58,7 @@ const Grid = () => {
   const renderOperator = () => (
     <View style={[styles.operatorCell, { width: cellSize, height: cellSize }]}>
       <Text style={styles.operatorText}>{selectedOperator || 'X'}</Text>
-      {console.log("operator render:",selectedOperator)}
+      {/* {console.log("operator render:",selectedOperator)} */}
     </View>
   );
 
@@ -105,7 +105,7 @@ const Grid = () => {
               {row}
             </Animated.Text>
           </View>
-          {console.log("for rowIndex:",rowIndex)}
+          {/* {console.log("for rowIndex:",rowIndex)} */}
           <GridRow
             rowIndex={rowIndex}
             cellSize={cellSize}

@@ -24,9 +24,9 @@ const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
         },
       ]}
     >
-      {console.log("outSide map")}
+      {/* {console.log("outSide map")} */}
       {colHeader.map((_, colIndex) => {
-        console.log("this is cell number:",`${rowIndex},${colIndex}`)
+        // console.log("this is cell number:",`${rowIndex},${colIndex}`)
         const cellKey = `${rowIndex},${colIndex}`;
         const isFocused = focusRowIndex === rowIndex && focusColIndex === colIndex;
         const isCorrect = correctCells.has(cellKey);
