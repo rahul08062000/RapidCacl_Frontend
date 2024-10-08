@@ -5,11 +5,11 @@ import useTimer from '../hooks/useTimer';
 
 const Header = () => {
   const { time } = useTimer();
-  const { width: screenWidth } = Dimensions.get('window'); // Dynamically get the screen width
+  const { height: screenHeight, width: screenWidth } = Dimensions.get('window'); // Dynamically get the screen width
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={[styles.headerContainer, { width: screenWidth - 12 }]}>
+      <View style={[styles.headerContainer, { width: screenWidth - 12, height: screenHeight * 0.06 }]}>
 
        {/* Logo on the right side */}
        <View style={styles.logoContainer}>

@@ -113,6 +113,7 @@ const Grid = () => {
             correctCells={correctCells}
             incorrectCells={incorrectCells}
             shiftAnimation={shiftAnimation} // Pass the shift animation to GridRow
+            totalRow={rowHeader.length}
           />
         </View>
       );

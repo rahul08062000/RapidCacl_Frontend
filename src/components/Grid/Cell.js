@@ -12,7 +12,8 @@ const Cell = ({
   setFocusRowIndex,
   setFocusColIndex,
   handleInputChange, // Accept handleInputChange as a prop
-  isLastColumn
+  isLastColumn,
+  isLastRow
 }) => {
   const fontSize = cellSize * 0.4; // Dynamic font size based on cell size
   const [cellValue, setCellValue] = useState(value);
@@ -20,8 +21,12 @@ const Cell = ({
 
   const animatedSize = useRef(new Animated.Value(cellSize)).current;
 
+  // {console.log("is Last Row", isLastRow)}
+
 
   const overlayLeftPosition = useRef(new Animated.Value(6)).current;
+  const overlayTopPosition = useRef(new Animated.Value(6)).current; 
+
 
   useEffect(() => {
     setCellValue(value); // Update cell value if prop changes
@@ -33,6 +38,12 @@ const Cell = ({
       duration: 300,
       useNativeDriver: false,
     }).start();
+    Animated.timing(overlayTopPosition, {
+      toValue: isLastRow ? -18 : 6, 
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+
   }, [isLastColumn]);
 
   //cell size increase Animation 
@@ -63,7 +74,7 @@ const Cell = ({
 
       {isFocused && (
         <Animated.View
-        style={[styles.overlay, { width: cellSize * 1.2, height: cellSize * 1.2, left: overlayLeftPosition }]}
+        style={[styles.overlay, { width: cellSize * 1.2, height: cellSize * 1.2, left: overlayLeftPosition, top: overlayTopPosition }]}
       >
         <Text style={[styles.overlayText, { fontSize: fontSize * 1.4 }]}>{cellValue}</Text>
       </Animated.View>
@@ -108,7 +119,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     position: 'absolute',
-    top: 6,  
+    //top: -6,  
     // left: 6,  
     height: '140%',  
     width: '140%',   

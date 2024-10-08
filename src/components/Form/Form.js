@@ -28,12 +28,12 @@ const Form = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const windowWidth = Dimensions.get('window').width; // Get screen width
+  const { height: windowHeight, width: windowWidth } = Dimensions.get('window'); // Get screen width and height
 
   const animateDropdown = (pickerType, shouldOpen) => {
     setIsAnimating(true);
     Animated.timing(animatedHeight, {
-      toValue: shouldOpen ? 150 : 0,
+      toValue: shouldOpen ? windowHeight * 0.3 : 0, // Set the dropdown height to 30% of the screen
       duration: 300,
       easing: Easing.out(Easing.ease),
       useNativeDriver: false,
@@ -91,7 +91,7 @@ const Form = () => {
   };
 
   const renderPickerOptions = (options, pickerType) => (
-    <View style={[styles.keyboardReplacementContainer, { width: windowWidth }]}>
+    <Animated.View style={[styles.keyboardReplacementContainer, { width: windowWidth, height: animatedHeight }]}>
       <ScrollView>
         {options.map((option, index) => {
           const isSelected = selectedOption === option;
@@ -99,37 +99,43 @@ const Form = () => {
             <TouchableOpacity
               key={index}
               onPress={() => handleSelection(pickerType, option)} // Call handleSelection
-              style={[
-                styles.keyContainer,
-                { backgroundColor: isSelected ? '#eceefe' : '#ffffff' },
-              ]}
+              style={[styles.keyContainer, { backgroundColor: isSelected ? '#D6E6FF' : '#FFF' }]}
             >
               <Text style={styles.keyText}>{option}</Text>
             </TouchableOpacity>
           );
         })}
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 
   return (
     <View style={globalStyles.formContainer}>
       <View style={styles.inputContainer}>
         <TouchableOpacity onPress={() => togglePicker('grid', gridSizeOptions)} style={styles.circleButton}>
-          <Text style={styles.circleButtonText}>{gridSize}</Text>
+          <Text style={styles.circleButtonText} adjustsFontSizeToFit numberOfLines={1}>
+            {gridSize}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => togglePicker('difficulty', difficultyOptions)} style={styles.circleButton}>
-          <Text style={styles.circleButtonText}>{difficulty}</Text>
+          <Text style={styles.circleButtonText} adjustsFontSizeToFit numberOfLines={1}>
+            {difficulty}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => togglePicker('operator', operatorOptions)} style={styles.circleButton}>
-          <Text style={styles.circleButtonText}>{selectedOperator}</Text>
+          <Text style={styles.circleButtonText} adjustsFontSizeToFit numberOfLines={1}>
+            {selectedOperator}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => togglePicker('inputMode', inputModeOptions)} style={styles.circleButton}>
-          <Text style={styles.circleButtonText}>{inputMode}</Text>
+          <Text style={styles.circleButtonText} adjustsFontSizeToFit numberOfLines={1}>
+            {inputMode}
+          </Text>
         </TouchableOpacity>
-        {/* Settings button added to the same row */}
         <TouchableOpacity onPress={() => togglePicker('settings', settingsOptions)} style={styles.circleButton}>
-          <Text style={styles.circleButtonText}>Settings</Text>
+          <Text style={styles.circleButtonText} adjustsFontSizeToFit numberOfLines={1}>
+            Settings
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -155,15 +161,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#fff',
     fontWeight: 'bold',
+    textAlign: 'center',
+    paddingHorizontal: 5, // Add padding to ensure text fits within the circle
   },
-  // Keyboard replacement dropdown container
+  // Animated dropdown container that adjusts height to 30% of the screen
   keyboardReplacementContainer: {
-    height: 200, // Match CustomKeyboard height
     justifyContent: 'center',
     backgroundColor: '#f0f0f0', // Match CustomKeyboard background
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#f0f0f0',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 6, // Add shadow for Android devices
   },
   // Full-width key container inside dropdown
   keyContainer: {
@@ -171,18 +184,16 @@ const styles = StyleSheet.create({
     height: 50, // Match CustomKeyboard key height
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ffffff', // Initial background color
+    backgroundColor: '#ffffff', 
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+    paddingVertical: 10,
   },
   keyText: {
     fontSize: 20,
     color: '#003366',
-    fontWeight: '500',
-    shadowColor: 'black',
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 1,
+    fontWeight: '600',
+    textAlign: 'left',
   },
 });
 

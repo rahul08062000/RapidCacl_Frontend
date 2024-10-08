@@ -3,7 +3,7 @@ import { View, StyleSheet, Animated } from 'react-native';
 import { AppContext } from '../../context/AppContext';
 import Cell from './Cell';
 
-const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
+const GridRow = ({ rowIndex, cellSize, shiftAnimation,totalRow }) => {
   const {
     colHeader,
     inputValues,
@@ -14,6 +14,9 @@ const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
     setFocusRowIndex,
     setFocusColIndex,
   } = useContext(AppContext);
+
+  const isLastRow = rowIndex === totalRow.length -1;
+
 
   return (
     <Animated.View
@@ -26,7 +29,7 @@ const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
     >
       {/* {console.log("outSide map")} */}
       {colHeader.map((_, colIndex) => {
-        // console.log("this is cell number:",`${rowIndex},${colIndex}`)
+        //  console.log("this is rowIndex:",`${rowIndex}`)
         const cellKey = `${rowIndex},${colIndex}`;
         const isFocused = focusRowIndex === rowIndex && focusColIndex === colIndex;
         const isCorrect = correctCells.has(cellKey);
@@ -51,6 +54,7 @@ const GridRow = ({ rowIndex, cellSize, shiftAnimation }) => {
             setFocusColIndex={setFocusColIndex}
             isLastColumn={isLastColumn}
             totalCells={totalCells}
+            isLastRow={isLastRow}
           />
           </View>
         );

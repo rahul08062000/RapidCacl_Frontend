@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "MyGridApp",
+    "name": "1MATHTRIX",
     "slug": "MyGridApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/playstore.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/1MATHTRIX.png",
@@ -13,15 +13,15 @@
       "jsEngine": "hermes"
     },
     "ios": {
-      "icon": "./assets/1MATHTRIX.png",
+      "icon": "./assets/1MATHTRIX@2x.png",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/1MATHTRIX.png",
+        "foregroundImage": "./assets/playstore.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.rahulSaini.RapidCacl"
+      "package": "com.ONEMATHTRIX"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -51,7 +51,7 @@ const Scoreboard = () => {
                  >
                     <Ionicons name="arrow-back" size={24} color="#333" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Summary Screen</Text>
+                <Text style={styles.headerTitle}>Summary</Text>
             </View>
             <View style={styles.separatorLine} />
 

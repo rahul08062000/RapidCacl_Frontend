@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, SafeAreaView, StyleSheet } from 'react-native';
+import { View, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
 import { AppProvider, AppContext } from './src/context/AppContext';
 import Header from './src/components/Header';
 import Form from './src/components/Form/Form';
@@ -7,9 +7,14 @@ import Grid from './src/components/Grid/Grid';
 import CustomKeyboard from './src/components/CustomKeyboard';
 import GuessModeKeyboard from './src/components/GuessModeKeyboard';
 import Scoreboard from './src/components/Scoreboard'; // Import your Scoreboard component
+import LevelScreen from './src/components/LevelScreen ';
+
+const { height } = Dimensions.get('window'); // Get the screen height
 
 const MainContent = () => {
   const { inputMode, showScoreboard } = useContext(AppContext);
+
+  return <LevelScreen/>
 
   // Show the Scoreboard if showScoreboard is true
   if (showScoreboard) {
@@ -46,7 +51,7 @@ const AppContent = () => {
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       {/* Render Header only when the form is not visible and scoreboard is not shown */}
-      {!isFormVisible && !showScoreboard && <Header />}
+      {/* {!isFormVisible && !showScoreboard && <Header />} */}
       <MainContent />
     </SafeAreaView>
   );
@@ -78,18 +83,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   formContainer: {
-    flex: 0.8, // Increase the height of the form to make it more prominent
+    height: height * 0.10, // 10% of the screen height
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f7f7f7',
-    paddingVertical: 10, // Reduce any unnecessary margin or padding
-    marginVertical:10,
-    zIndex:0
+    // paddingVertical: 10,
+    // marginVertical: 10,
+    zIndex: 0,
   },
   keyboardContainer: {
-    height: 200, // Fixed height for the keyboard container
+    height: height * 0.30, // 30% of the screen height
     justifyContent: 'center',
-    marginVertical:25
+    marginVertical: 15,
   },
 });
 
