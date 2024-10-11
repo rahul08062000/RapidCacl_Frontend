@@ -489,7 +489,7 @@
 // export default CustomKeyboard;
 
 import React, { useContext, useRef, useEffect, useCallback } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Animated } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Animated, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppContext } from '../context/AppContext';
 
@@ -509,11 +509,12 @@ const CustomKeyboard = () => {
     handleAutoSubmit, 
     handleRestart,
     setShowScoreboard,
-    isKeyboardVisible,
-    keyboardReplacementContent
+    isGameStarted, // Add this to check if the game has started
   } = useContext(AppContext);
 
   const blinkAnim = useRef(new Animated.Value(1)).current;
+  const { height } = Dimensions.get('window'); 
+
 
   // Start blinking animation when the game is submitted
   useEffect(() => {
@@ -527,6 +528,19 @@ const CustomKeyboard = () => {
       handleAutoSubmit();
     }
   }, [isSubmitEnabled]);
+
+  useEffect(()=>{
+    const cellKey = `${focusRowIndex},${focusColIndex}`;
+    let currentCellValue = inputValues[cellKey] || '';
+    const expectedValueLength = expectedValues[cellKey]?.toString().length || 0;
+
+    if (currentCellValue.length === expectedValueLength) {
+      setTimeout(() => {
+        switchToRandomUnvisitedCell();
+      }, 20); // Delay of 200ms before switching to next cell
+    }
+
+  },[inputValues])
 
   const startBlinking = () => {
     Animated.loop(
@@ -549,6 +563,10 @@ const CustomKeyboard = () => {
     const cellKey = `${focusRowIndex},${focusColIndex}`;
     let currentCellValue = inputValues[cellKey] || '';
     const expectedValueLength = expectedValues[cellKey]?.toString().length || 0;
+
+    if (currentCellValue.length >= expectedValueLength) {
+      return; // Exit early if input exceeds the expected length
+    }
   
     if (text === 'C') {
       currentCellValue = '';
@@ -573,13 +591,13 @@ const CustomKeyboard = () => {
     setVisitedCells((prev) => new Set(prev).add(cellKey));
   
     // Move to the next unvisited cell if input matches the expected length with a delay
-    if (currentCellValue.length === expectedValueLength) {
-      setTimeout(() => {
-        switchToRandomUnvisitedCell();
-      }, 20); // Delay of 200ms before switching to next cell
-    }
+    // if (currentCellValue.length === expectedValueLength) {
+    //   setTimeout(() => {
+    //     switchToRandomUnvisitedCell();
+    //   }, 20); // Delay of 200ms before switching to next cell
+    // }
   }, [focusRowIndex, focusColIndex, inputValues, setVisitedCells, switchToRandomUnvisitedCell, expectedValues]);
-  
+
   const keys = [
     { label: '1', color: '#eceefe' },
     { label: '2', color: '#eceefe' },
@@ -594,28 +612,22 @@ const CustomKeyboard = () => {
     { label: '0', color: '#eceefe' },
     { label: 'del', color: '#eceefe' },
   ];
-  
+
   const handleViewScoreboard = () => {
     setShowScoreboard(true);
   };
 
-  if (!isKeyboardVisible) {
+  // Render the keyboard only when the game is started
+  if (!isGameStarted) {
     return (
       <View style={styles.keyboardReplacement}>
-        {keyboardReplacementContent}
+        <Text style={styles.inactiveText}>Game is not started yet</Text>
       </View>
     );
   }
 
   return (
-    <View style={[
-      styles.keyboard, 
-      { 
-        backgroundColor: isSubmitEnabled ? '#f0f0f0' : 'white', 
-        borderTopWidth: isSubmitEnabled ? 0 : 1 // Set to 0 when isSubmitEnabled is true, otherwise 1
-      }
-  ]}>
-      {/* Conditional rendering based on isSubmitEnabled */}
+    <View style={[styles.keyboard,{height:height * 0.30}, { backgroundColor: isSubmitEnabled ? '#f0f0f0' : 'white', borderTopWidth: isSubmitEnabled ? 0 : 1 }]}>
       {!isSubmitEnabled ? (
         <>
           <View style={styles.row}>
@@ -678,9 +690,9 @@ const CustomKeyboard = () => {
           </View>
         </>
       ) : (
-        <TouchableOpacity 
-          style={[styles.submitButton, { backgroundColor: isSubmitEnabled ? '#29387b' : '#d3d3d3' }]} 
-          onPress={handleViewScoreboard} 
+        <TouchableOpacity
+          style={[styles.submitButton, { backgroundColor: isSubmitEnabled ? '#29387b' : '#d3d3d3' }]}
+          onPress={handleViewScoreboard}
           disabled={!isSubmitEnabled}
         >
           <Text style={styles.submitButtonText}>View Scoreboard</Text>
@@ -691,7 +703,7 @@ const CustomKeyboard = () => {
 };
 
 const styles = StyleSheet.create({
-  keyboard: {
+  keyboard: {    
     flexDirection: 'column',
     alignItems: 'center',
     paddingVertical: 10,
@@ -711,7 +723,6 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    // marginHorizontal: 5,
     borderRadius: 10,
     backgroundColor: '#eceefe',
     shadowColor: '#000',
@@ -722,33 +733,36 @@ const styles = StyleSheet.create({
   keyText: {
     fontSize: 20,
     color: '#003366',
-    fontWeight:'500',
+    fontWeight: '500',
     shadowColor: 'black',
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 1,
-
   },
   submitButton: {
     backgroundColor: '#f0f0f0',
-    // paddingVertical: 10,
-    // paddingHorizontal: 10,
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     width: '90%',
     marginHorizontal: 18,
-    height:48,
-    marginBottom:15
+    height: 48,
+    marginBottom: 15,
   },
   submitButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  inactiveText: {
+    fontSize: 16,
+    color: '#999',
+    textAlign: 'center',
+  },
 });
 
 export default CustomKeyboard;
+
 
 
 

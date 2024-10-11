@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/playstore.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ONEMATHTRIX"
+      "package": "com.rahulSaini.RapidCacl"
     },
     "web": {
       "favicon": "./assets/favicon.png"

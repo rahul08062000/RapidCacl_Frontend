@@ -1,4 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
 
 const globalStyles = StyleSheet.create({
   container: {
@@ -63,6 +66,12 @@ const globalStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  responsiveText: {
+    fontSize: screenWidth * 0.05, // Scale font size based on screen size
+  },
+  responsivePadding: {
+    padding: screenWidth * 0.02, // Scale padding based on screen size
+  }
 });
 
 export default globalStyles;

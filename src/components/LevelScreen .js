@@ -1,148 +1,180 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Dimensions, ScrollView } from 'react-native';
+// import React, { useState, useContext, useRef } from 'react';
+// import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Dimensions, Animated, PanResponder } from 'react-native';
+// import { AppContext } from '../context/AppContext';
 
-const LevelScreen = () => {
-  const [unlockedLevel, setUnlockedLevel] = useState(1); // Default first level is open
-  const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]; // Define levels
+// const LevelScreen = () => {
+//   const { unlockedLevel, setSelectedLevel, setIsGameStarted, generateRandomHeaders } = useContext(AppContext);
+//   const levelsPerPage = 12; // Number of levels per page
+//   const [currentPage, setCurrentPage] = useState(0); // Current page for level navigation
+//   const levels = Array.from({ length: 200 }, (_, i) => i + 1); // Generate 200 levels
+  
+//   const translateX = useRef(new Animated.Value(0)).current;
 
-  const { width: screenWidth, height: screenHeight } = Dimensions.get('window'); // Get screen dimensions
+//   const panResponder = useRef(
+//     PanResponder.create({
+//       onMoveShouldSetPanResponder: (evt, gestureState) => Math.abs(gestureState.dx) > 10,
+//       onPanResponderMove: Animated.event([null, { dx: translateX }], {
+//         useNativeDriver: false,
+//       }),
+//       onPanResponderRelease: (evt, gestureState) => {
+//         if (gestureState.dx > 50) {
+//           goToPreviousPage(); // Swipe right for the previous page
+//         } else if (gestureState.dx < -50) {
+//           goToNextPage(); // Swipe left for the next page
+//         }
+//         Animated.spring(translateX, {
+//           toValue: 0,
+//           useNativeDriver: false,
+//         }).start();
+//       },
+//     })
+//   ).current;
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={[styles.container, { paddingHorizontal: screenWidth * 0.05 }]}>
-        
-        {/* Main content that takes up 80% of the screen */}
-        <View style={[styles.contentContainer, { height: screenHeight * 0.8 }]}>
-          {/* Title */}
-          <Text style={styles.headerText}>Select a Level</Text>
-          
-          {/* Scrollable list of levels */}
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.levelContainer}>
-              {levels.map((level, index) => {
-                const isUnlocked = level <= unlockedLevel; // Check if the level is unlocked
-                const isCurrentLevel = level === unlockedLevel; // Check if this is the currently unlocked level
+//   // Function to select a level
+//   const handleLevelSelect = (level) => {
+//     if (level <= unlockedLevel) {
+//       setSelectedLevel(level); // Set the selected level
+//       generateRandomHeaders(level); // Generate the headers based on the level
+//       setIsGameStarted(true); // Start the game
+//     }
+//   };
 
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.levelButton,
-                      isUnlocked ? styles.unlockedLevel : styles.lockedLevel, 
-                      isCurrentLevel ? styles.currentLevel : null, 
-                    ]}
-                    onPress={() => {
-                      if (isUnlocked) {
-                        alert(`Level ${level} selected!`);
-                      }
-                    }}
-                    disabled={!isUnlocked} // Disable button if the level is locked
-                  >
-                    <Text style={[styles.levelText, isUnlocked ? styles.unlockedText : styles.lockedText]}>
-                      Level {level}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </ScrollView>
-          
-          {/* Button to unlock the next level */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.updateButton}
-              onPress={() => {
-                if (unlockedLevel < levels.length) {
-                  setUnlockedLevel(unlockedLevel + 1); // Unlock the next level
-                }
-              }}
-            >
-              <Text style={styles.buttonText}>Unlock Next Level</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </SafeAreaView>
-  );
-};
+//   // Function to go to the previous page
+//   const goToPreviousPage = () => {
+//     if (currentPage > 0) {
+//       setCurrentPage(currentPage - 1);
+//     }
+//   };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#f7f7f7',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  contentContainer: {
-    justifyContent: 'space-between',
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-    textAlign: 'center',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  levelContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  levelButton: {
-    width: 80,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-  },
-  unlockedLevel: {
-    backgroundColor: '#4CAF50', // Green for unlocked
-    borderColor: '#388E3C',
-  },
-  lockedLevel: {
-    backgroundColor: '#ccc', // Gray for locked levels
-    borderColor: '#999',
-  },
-  currentLevel: {
-    backgroundColor: '#FFD700', // Highlight current level in yellow
-    borderColor: '#FFC107',
-  },
-  levelText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  unlockedText: {
-    color: '#fff',
-  },
-  lockedText: {
-    color: '#666',
-  },
-  buttonContainer: {
-    marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  updateButton: {
-    backgroundColor: '#007BFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});
+//   // Function to go to the next page
+//   const goToNextPage = () => {
+//     if ((currentPage + 1) * levelsPerPage < levels.length) {
+//       setCurrentPage(currentPage + 1);
+//     }
+//   };
 
-export default LevelScreen;
+//   // Paginate levels
+//   const paginatedLevels = levels.slice(currentPage * levelsPerPage, (currentPage + 1) * levelsPerPage);
+
+//   return (
+//     <SafeAreaView style={styles.safeArea}>
+//       <Text style={styles.headerText}>Select Level</Text>
+
+//       {/* Levels wrapped in PanResponder for swipe detection */}
+//       <Animated.View
+//         style={[styles.levelNavigationContainer, { transform: [{ translateX }] }]}
+//         {...panResponder.panHandlers}
+//       >
+//         <View style={styles.levelContainer}>
+//           {paginatedLevels.map((level, index) => {
+//             const isUnlocked = level <= unlockedLevel;
+//             return (
+//               <TouchableOpacity
+//                 key={index}
+//                 style={[styles.levelButton, isUnlocked ? styles.unlockedLevel : styles.lockedLevel]}
+//                 onPress={() => handleLevelSelect(level)}
+//                 disabled={!isUnlocked}
+//               >
+//                 <Text style={[styles.levelText, isUnlocked ? styles.unlockedText : styles.lockedText]}>{level}</Text>
+//               </TouchableOpacity>
+//             );
+//           })}
+//         </View>
+//       </Animated.View>
+
+//       {/* Pagination Buttons */}
+//       <View style={styles.paginationButtons}>
+//         <TouchableOpacity
+//           onPress={goToPreviousPage}
+//           style={[styles.navButton, currentPage === 0 && styles.disabledButton]}
+//           disabled={currentPage === 0}
+//         >
+//           <Text style={styles.navButtonText}>{'<'}</Text>
+//         </TouchableOpacity>
+
+//         <TouchableOpacity
+//           onPress={goToNextPage}
+//           style={[styles.navButton, (currentPage + 1) * levelsPerPage >= levels.length && styles.disabledButton]}
+//           disabled={(currentPage + 1) * levelsPerPage >= levels.length}
+//         >
+//           <Text style={styles.navButtonText}>{'>'}</Text>
+//         </TouchableOpacity>
+//       </View>
+//     </SafeAreaView>
+//   );
+// };
+
+// const { width: screenWidth } = Dimensions.get('window');
+
+// const styles = StyleSheet.create({
+//   safeArea: {
+//     flex: 1,
+//     backgroundColor: '#f7f7f7',
+//     alignItems: 'center',
+//   },
+//   headerText: {
+//     fontSize: 28,
+//     fontWeight: 'bold',
+//     marginVertical: 20,
+//     color: '#1E90FF',
+//   },
+//   levelNavigationContainer: {
+//     width: screenWidth,
+//   },
+//   levelContainer: {
+//     flexDirection: 'row',
+//     flexWrap: 'wrap',
+//     justifyContent: 'center',
+//   },
+//   levelButton: {
+//     width: screenWidth * 0.18,
+//     height: screenWidth * 0.18,
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     margin: 10,
+//     borderRadius: 10,
+//     borderWidth: 2,
+//   },
+//   unlockedLevel: {
+//     backgroundColor: '#1E90FF',
+//     borderColor: '#1C86EE',
+//   },
+//   lockedLevel: {
+//     backgroundColor: '#B0C4DE',
+//     borderColor: '#A9A9A9',
+//   },
+//   levelText: {
+//     fontSize: 20,
+//     fontWeight: 'bold',
+//   },
+//   unlockedText: {
+//     color: '#fff',
+//   },
+//   lockedText: {
+//     color: '#666',
+//   },
+//   paginationButtons: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     width: screenWidth * 0.7,
+//     marginVertical: 10,
+//   },
+//   navButton: {
+//     width: 50,
+//     height: 50,
+//     backgroundColor: '#007BFF',
+//     justifyContent: 'center',
+//     alignItems: 'center',
+//     borderRadius: 25,
+//     elevation: 5,
+//   },
+//   navButtonText: {
+//     fontSize: 24,
+//     color: '#fff',
+//   },
+//   disabledButton: {
+//     backgroundColor: '#ccc',
+//   },
+// });
+
+// export default LevelScreen;

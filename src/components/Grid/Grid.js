@@ -145,33 +145,22 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     backgroundColor: '#f0f0f0',
-    paddingTop: 0, // Remove top padding to stick to header
-    marginTop: 0, // Remove top margin
     alignItems: 'center', // Align items to the top
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start', // Align headers to the top left
     alignItems: 'flex-start', // Align headers to the top
-    marginBottom: 0, // Remove bottom margin
-    marginTop: 0, // Remove top margin
-    // overflow: 'hidden', // Ensure that shifted headers are hidden
   },
   columnHeadersContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start', // Align column headers to the top left
-    paddingBottom: 0, // Remove bottom padding
-    marginTop: 0, // Remove top margin to ensure it sticks to the header
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'flex-start', // Align row content to the top left
-    marginTop: 0, 
-    paddingTop: 0, 
   },
   rowsContainer: {
-    marginTop: 0, 
-    paddingTop: 0, 
     alignItems: 'flex-start', 
   },
   operatorCell: {
@@ -190,8 +179,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#CADCFC',
     borderWidth: 1,
     borderColor: '#fff',
-    marginBottom: 0, // Remove bottom margin
-    paddingBottom: 0, // Remove bottom padding
     zIndex:1
   },
   headerText: {
